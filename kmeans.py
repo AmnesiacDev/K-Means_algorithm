@@ -1,7 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+def mk_folder(self, path):
+    try:
+        os.mkdir(path)
+        print(f"Directory '{path}' created successfully.")
+    except FileExistsError:
+        pass
+    except PermissionError:
+        print(f"Permission denied: Unable to create '{path}'.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 class Kmeans:
 
@@ -29,16 +38,25 @@ class Kmeans:
             self.centroids = new_centroids
 
 
-    def plot_clusters(self, folder="kmeans_output", output_name = "kmeans"):
-        plt.figure(figsize=(8, 6))
+    def plot_clusters(self, output_name = "kmeans", folder="", ext="jpg"):
+        parent_folder = "kmeans_output"
+        mk_folder(parent_folder)
+        if folder:
+            mk_folder(f"{parent_folder}/{folder}")
 
+            path = f"{parent_folder}/{folder}/{output_name}"
+        else:
+            path = f"{parent_folder}/{output_name}"
+
+        plt.figure(figsize=(8, 6))
         k = len(self.centroids)
         for i in range(k):
             plt.scatter(self.samples[self.labels == i, 0], self.samples[self.labels == i, 1], label=f'Cluster {i+1}')
         plt.scatter(self.centroids[:, 0], self.centroids[:, 1], c='black', s=200, marker='X', label='Centroids')
         plt.title('K-Means Clustering (From Scratch)')
         plt.legend()
-        plt.savefig(f"{folder}/{output_name}.jpg")
+
+        plt.savefig(f"{path}.{ext}")
 
 
     def compare_seeds(self, iterations):
@@ -46,5 +64,5 @@ class Kmeans:
             SEED = np.random.randint(0, 100)
             loop = Kmeans(self.n_samples, self.k, SEED)
             loop.update_clusters()
-            loop.plot_clusters("kmeans_seeds", f"iter-{i}")
+            loop.plot_clusters(f"iter-{i}", folder="kmeans_seeds")
 
