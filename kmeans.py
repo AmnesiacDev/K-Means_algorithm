@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def mk_folder(self, path):
+def mk_folder(path):
     try:
         os.mkdir(path)
         print(f"Directory '{path}' created successfully.")
